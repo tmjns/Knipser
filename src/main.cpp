@@ -1,20 +1,22 @@
 #include <Arduino.h>
 #include <BleKeyboard.h>
+#include <PinButton.h>
 
 BleKeyboard bleKeyboard("Knipser");
+PinButton myButton(12);
 
 int led = 25;
-int button = 12;
 
 void setup() {
   Serial.begin(115200);
   Serial.println("Start BLE!");
   bleKeyboard.begin();
   pinMode(led, OUTPUT);
-  pinMode(button, INPUT);
 }
 
 void loop() {
+
+  myButton.update(); 
 
   if(!(bleKeyboard.isConnected())) {
     delay(200);
@@ -24,11 +26,18 @@ void loop() {
   }
 
   if(bleKeyboard.isConnected()) {
+
     digitalWrite(led,HIGH);
-    Serial.println(digitalRead(button));
-    if (digitalRead(button) == 1){
-      bleKeyboard.print("Bin da");
+
+    if (myButton.isDoubleClick()) {
+      // Serial.println("double");
+      bleKeyboard.write(KEY_LEFT_ARROW);
     }
-    delay(400);
+
+    if (myButton.isLongClick()) {
+      // Serial.println("long");
+      bleKeyboard.write(KEY_RIGHT_ARROW);
+    }
+  
   }
 }
