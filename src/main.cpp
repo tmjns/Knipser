@@ -1,10 +1,13 @@
+// Imports
 #include <Arduino.h>
 #include <BleKeyboard.h>
 #include <PinButton.h>
 
+// Create bleKeyboard with the name Knisper
 BleKeyboard bleKeyboard("Knipser");
+// Create myButton on pin 12
 PinButton myButton(12);
-
+// Declare LED and pin
 int led = 25;
 
 void setup() {
@@ -15,9 +18,10 @@ void setup() {
 }
 
 void loop() {
-
+  // Update the button library
   myButton.update(); 
 
+  // If there is no ble connection, led blinks
   if(!(bleKeyboard.isConnected())) {
     delay(200);
     digitalWrite(led,LOW);
@@ -25,19 +29,19 @@ void loop() {
     digitalWrite(led,HIGH);
   }
 
+  // If there is a ble connection, led is set to high
   if(bleKeyboard.isConnected()) {
 
     digitalWrite(led,HIGH);
 
+    // Double button press
     if (myButton.isDoubleClick()) {
-      // Serial.println("double");
       bleKeyboard.write(KEY_LEFT_ARROW);
     }
 
+    // One button press
     if (myButton.isLongClick()) {
-      // Serial.println("long");
       bleKeyboard.write(KEY_RIGHT_ARROW);
     }
-  
   }
 }
